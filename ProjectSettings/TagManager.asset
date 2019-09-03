@@ -3,7 +3,23 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - Sword UR
+  - Sword DR
+  - Inventory
+  - Hand
+  - locker
+  - myeq
+  - eq
+  - scroleq
+  - lockerwindow
+  - Enemy
+  - PickUp
+  - Spear
+  - Sword L
+  - Sword R
+  - Sword U
+  - Sword D
   layers:
   - Default
   - TransparentFX
@@ -13,7 +29,7 @@ TagManager:
   - UI
   - 
   - 
-  - 
+  - Enemy
   - 
   - 
   - 
@@ -40,4 +56,10 @@ TagManager:
   m_SortingLayers:
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: Hero
+    uniqueID: 372329491
+    locked: 0
+  - name: Enemy
+    uniqueID: 3431263393
     locked: 0
