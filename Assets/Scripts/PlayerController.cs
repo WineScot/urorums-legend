@@ -5,7 +5,7 @@ using UnityEngine;
 /*
  * ----------PLAYER CONTROLER----------
  * controls basic player moves like:
- * walking, running, jumping, flips
+ * walking, running, jumping, dashs
  * and controls action direction:
  * up, down, right, left
  */
@@ -14,13 +14,13 @@ public class PlayerController : MonoBehaviour
     // COMPONENT 
     private Rigidbody2D rb2d;
     private Animator anim;
-    Event e;
     // MOVE CONTROL BUTTONS
     public string up_key = "up";
     public string down_key = "down";
     public string left_key = "left";
     public string right_key = "right";
     public string jump_key = "space";
+    public string dash_key = "x";
     // SPECIAL MODE
     private bool canMove = true;
     private bool upMode = false;
@@ -30,26 +30,32 @@ public class PlayerController : MonoBehaviour
     // VARIABLES 
     private float walkSpeed = 50;
     private float runSpeed = 90;
-    private float flipSpeed = 200;
+    private float dashSpeed = 200;
     private float jumpHeight = 110;
+    private float dashBlockTime = 1.2f;
+    private float dashLongTime = 0.2f;
 
-    public bool left_go = false;
-    public bool right_go = false;
+    private bool dash = false;
+    private bool canDash = true;
 
     // START
     void Start()
     {
        anim = GetComponent<Animator>();
        rb2d = GetComponent<Rigidbody2D>();
-       left_go = false;
-       right_go = false;
     }
 
-    private void FlipPrivent()
+    void DashEnd()
     {
-        left_go = false;
-        right_go = false;
-}
+        dash = false;
+        canDash = false;
+        Invoke("UnlockDash", dashBlockTime);
+    }
+
+    void UnlockDash()
+    {
+        canDash = true;
+    }
 
     void FixedUpdate()
     {
@@ -62,37 +68,25 @@ public class PlayerController : MonoBehaviour
 				rb2d.velocity = movement;
 			}
 
-            // WALKING
-            e = Event.current;
             if (Input.GetKey(right_key)) // RIGHT 
             {
                 direction = "right";
-                if (e.capsLock)
-                {
-                    Walk(ref runSpeed);
-                }
-                else
-                {
-                    Walk(ref walkSpeed);
-                }
+                if (dash) Walk(ref dashSpeed);
+                else Walk(ref walkSpeed);
+              
             }
             else if (Input.GetKey(left_key)) // LEFT
             {
                 direction = "left";
-                if (e.capsLock)
-                {
-                    Walk(ref runSpeed);
-                }
-                else
-                {
-                    Walk(ref walkSpeed);
-                }
+                if (dash) Walk(ref dashSpeed);
+                else Walk(ref walkSpeed);
             }
 			else //STOPPING
             {
                 anim.SetTrigger("playerIdle");
 				Vector2 movement = new Vector2(0, rb2d.velocity.y);
 				rb2d.velocity = movement;
+                if (dash) { DashEnd(); }
             }
 			
             // LOOKING/FIGHTING - UP
@@ -103,40 +97,10 @@ public class PlayerController : MonoBehaviour
 			if (Input.GetKey(down_key)) downMode = true;
 			else downMode = false;
 
-            // ROGGHT FLIP
-            if (Input.GetKeyDown(right_key))
+            if (Input.GetKey(dash_key) && canDash) // dash 
             {
-                if (right_go)
-                {
-                    Vector2 movement = new Vector2(200, rb2d.velocity.y);
-                    rb2d.velocity = movement;
-                    anim.SetTrigger("playerLeftWalk");
-                    canMove = false;
-                    Invoke("SetCantMove", 0.1f);
-                }
-                else
-                {
-                    right_go = true;
-                }
-                Invoke("FlipPrivent", 0.2f);
-            }
-
-            // LEFT FLIP
-            if (Input.GetKeyDown(left_key))
-            {
-                if (left_go)
-                {
-                    Vector2 movement = new Vector2(-200, rb2d.velocity.y);
-                    rb2d.velocity = movement;
-                    anim.SetTrigger("playerRightWalk");
-                    canMove = false;
-                    Invoke("SetCantMove", 0.1f);
-                }
-                else
-                {
-                    left_go = true;
-                }
-                Invoke("FlipPrivent", 0.2f);
+                dash = true;
+                Invoke("DashEnd", dashLongTime);
             }
         }
     }
