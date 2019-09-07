@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using UnityEngine;
 
 /*
@@ -8,6 +9,14 @@ using UnityEngine;
  * walking, running, jumping, dashs
  * and controls action direction:
  * up, down, right, left
+ */
+
+/*
+ * ------------IMPORTANT!-----------
+ * Solution with caps lock is from 
+ * this page: https://answers.unity.com/questions/164795/unable-to-trace-capslock-on-and-off.html
+ * author:  quicktom
+ * author page: https://answers.unity.com/users/33200/u3d-91312121.html
  */
 public class PlayerController : MonoBehaviour
 {
@@ -28,8 +37,8 @@ public class PlayerController : MonoBehaviour
     private bool canJump = true;
     public string direction = "right";
     // VARIABLES 
-    private float walkSpeed = 50;
-    private float runSpeed = 90;
+    private float walkSpeed = 10;
+    private float runSpeed = 50;
     private float dashSpeed = 200;
     private float jumpHeight = 110;
     private float dashBlockTime = 1.2f;
@@ -37,12 +46,17 @@ public class PlayerController : MonoBehaviour
 
     private bool dash = false;
     private bool canDash = true;
+    // CAPS LOCK STATE
+    [DllImport("user32.dll")]
+    public static extern short GetKeyState(int keyCode);
+    int isCapsLockOn;
 
     // START
     void Start()
     {
        anim = GetComponent<Animator>();
        rb2d = GetComponent<Rigidbody2D>();
+       isCapsLockOn = (((ushort)GetKeyState(0x14)) & 0xffff);
     }
 
     void DashEnd()
@@ -57,29 +71,49 @@ public class PlayerController : MonoBehaviour
         canDash = true;
     }
 
+    void OnGUI()
+    {
+        GUI.Label(new Rect(10, 10, 100, 20), isCapsLockOn.ToString());
+    }
+
     void FixedUpdate()
     {
+        
         if (canMove)
         {
+            // RUNNING or WALKING
+            isCapsLockOn = (((ushort)GetKeyState(0x14)) & 0xffff);
+            if(Input.GetKey("left shift"))
+            {
+                isCapsLockOn = isCapsLockOn > 0 ? 0 : 1;
+            }
             // JUMPING
             if (Input.GetKey(jump_key) && canJump)
 			{
 				Vector2 movement = new Vector2(rb2d.velocity.x, jumpHeight);
 				rb2d.velocity = movement;
 			}
-
+            // MOVING
             if (Input.GetKey(right_key)) // RIGHT 
             {
                 direction = "right";
                 if (dash) Walk(ref dashSpeed);
-                else Walk(ref walkSpeed);
+                else
+                {
+                    if(isCapsLockOn > 0) Walk(ref runSpeed);
+                    else Walk(ref walkSpeed);
+                }
               
             }
             else if (Input.GetKey(left_key)) // LEFT
             {
                 direction = "left";
                 if (dash) Walk(ref dashSpeed);
-                else Walk(ref walkSpeed);
+                else
+                {
+                    if (isCapsLockOn > 0) Walk(ref runSpeed);
+                    else Walk(ref walkSpeed);
+                }
             }
 			else //STOPPING
             {
@@ -88,16 +122,14 @@ public class PlayerController : MonoBehaviour
 				rb2d.velocity = movement;
                 if (dash) { DashEnd(); }
             }
-			
             // LOOKING/FIGHTING - UP
 			if (Input.GetKey(up_key)) upMode = true;
-			else upMode = false;
-			
+			else upMode = false;			
             // LOOKING/FIGHTING/CROUCHNIG - DOWN
 			if (Input.GetKey(down_key)) downMode = true;
 			else downMode = false;
-
-            if (Input.GetKey(dash_key) && canDash) // dash 
+            // DASH
+            if (Input.GetKey(dash_key) && canDash) 
             {
                 dash = true;
                 Invoke("DashEnd", dashLongTime);
