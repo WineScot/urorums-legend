@@ -37,12 +37,16 @@ public class PlayerController : MonoBehaviour
     private bool canJump = true;
     public string direction = "right";
     // VARIABLES 
+    private float zero = 0;
     private float walkSpeed = 10;
     private float runSpeed = 50;
     private float dashSpeed = 200;
     private float jumpHeight = 110;
-    private float dashBlockTime = 1.2f;
+    private float dashBlockTime = 1;
     private float dashLongTime = 0.2f;
+    private int loudSoundNumber = 0;
+    public bool discreetMoving = true;
+    private bool heroInAir = false;
 
     private bool dash = false;
     private bool canDash = true;
@@ -66,6 +70,24 @@ public class PlayerController : MonoBehaviour
         Invoke("UnlockDash", dashBlockTime);
     }
 
+    void LoudSound()
+    {
+        discreetMoving = false;
+        loudSoundNumber++;
+        Invoke("LoudSoundStop", 0.1f);
+    }
+
+    void LoudSoundStop()
+    {
+        loudSoundNumber--;
+        if(loudSoundNumber <= 0)
+        {
+            discreetMoving = true;
+            loudSoundNumber = 0;
+        }
+        
+    }
+
     void UnlockDash()
     {
         canDash = true;
@@ -76,9 +98,18 @@ public class PlayerController : MonoBehaviour
         GUI.Label(new Rect(10, 10, 100, 20), isCapsLockOn.ToString());
     }
 
+
     void FixedUpdate()
     {
-        
+        if(!canJump)
+        {
+            heroInAir = true;
+        }
+        else
+        {
+            if (heroInAir) LoudSound();
+            heroInAir = false;
+        }
         if (canMove)
         {
             // RUNNING or WALKING
@@ -87,12 +118,6 @@ public class PlayerController : MonoBehaviour
             {
                 isCapsLockOn = isCapsLockOn > 0 ? 0 : 1;
             }
-            // JUMPING
-            if (Input.GetKey(jump_key) && canJump)
-			{
-				Vector2 movement = new Vector2(rb2d.velocity.x, jumpHeight);
-				rb2d.velocity = movement;
-			}
             // MOVING
             if (Input.GetKey(right_key)) // RIGHT 
             {
@@ -103,24 +128,28 @@ public class PlayerController : MonoBehaviour
                     if(isCapsLockOn > 0) Walk(ref runSpeed);
                     else Walk(ref walkSpeed);
                 }
-              
+                anim.SetTrigger("playerRightWalk");
+
             }
             else if (Input.GetKey(left_key)) // LEFT
             {
                 direction = "left";
+
                 if (dash) Walk(ref dashSpeed);
                 else
                 {
                     if (isCapsLockOn > 0) Walk(ref runSpeed);
                     else Walk(ref walkSpeed);
                 }
+
+                anim.SetTrigger("playerLeftWalk");
             }
 			else //STOPPING
             {
+                Walk(ref zero);
                 anim.SetTrigger("playerIdle");
-				Vector2 movement = new Vector2(0, rb2d.velocity.y);
-				rb2d.velocity = movement;
                 if (dash) { DashEnd(); }
+
             }
             // LOOKING/FIGHTING - UP
 			if (Input.GetKey(up_key)) upMode = true;
@@ -133,6 +162,14 @@ public class PlayerController : MonoBehaviour
             {
                 dash = true;
                 Invoke("DashEnd", dashLongTime);
+            }
+            // JUMPING
+            if (Input.GetKey(jump_key) && canJump)
+            {
+                Vector2 movement = new Vector2(rb2d.velocity.x, jumpHeight);
+                rb2d.velocity = movement;
+                LoudSound();
+                heroInAir = true;
             }
         }
     }
@@ -176,17 +213,21 @@ public class PlayerController : MonoBehaviour
 
     private void Walk(ref float moveSpeed)
     {
+        if (canJump)
+        {
+            if (moveSpeed > walkSpeed) discreetMoving = false;
+            else discreetMoving = true;
+        }
         if (direction == "right")
         {
             Vector2 movement = new Vector2(moveSpeed, rb2d.velocity.y);
             rb2d.velocity = movement;
-            anim.SetTrigger("playerRightWalk");
+            
         }
         else
         {
             Vector2 movement = new Vector2(-moveSpeed, rb2d.velocity.y);
             rb2d.velocity = movement;
-            anim.SetTrigger("playerLeftWalk");
         }
     }
 

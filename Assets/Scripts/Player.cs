@@ -7,12 +7,13 @@ public class Player : MonoBehaviour
 {
 
     public float healthLevel = 100f;
+    public bool isHeroDiscreet = true;
     private float maxhealthLevel = 100f;
     //private int magicLevel = 1000;
     //private int baseAttack = 40;
     private float armorPoint = 0f;
     private float canHeal = 0.0f;
-
+    public bool heroIsNoisy = false;
     public GameObject health_points;
 
     public Texture2D healthTexture;
@@ -63,10 +64,19 @@ public class Player : MonoBehaviour
 
     // Update is called once per frame
 
-    void Update()
+    void FixedUpdate()
     {
 
         health_points.GetComponent<Text>().text = healthLevel.ToString();
+        if (!base.GetComponent<PlayerController>().discreetMoving || base.GetComponent<WeaponController>().onAttack)
+        {
+            heroIsNoisy = true;
+        }
+        else
+        {
+            heroIsNoisy = false;
+
+        }
     }
 
     IEnumerator heal() //Odczekuje, aby przyrost hp fajniej wygladal
