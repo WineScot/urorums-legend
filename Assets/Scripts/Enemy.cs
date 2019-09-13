@@ -2,59 +2,134 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using System;
 
-public class Enemy : MonoBehaviour {
-
+public class Enemy : MonoBehaviour
+{
+// ATTRIBUTES
+    // enemy components
     private Rigidbody2D rb2d;
-    private GameObject player;
+    private GameObject hero;
     private Animator anim;
-
     public GameObject health_points;
-    public int healthLevel = 100;
-    public SpriteRenderer spre;
+    public SpriteRenderer spri;
+    private FightControl heroFightControl;
+    // variables
+    public float healthLevel = 100;
+    public Vector4 measurements;
+    public Vector4 areaPosition;
+    public Vector4 crust;
+    private bool underAttack = false;
+    private bool isCoroutineExecuting = false;
+    private float enemyPositionX = 0;
+    private float enemyPositionY = 0;
 
-    private int armorLevel = 0;
+    // STANDARD METHOD
 
-    // Use this for initialization
-	void Start () 
+    // Used for initialization
+    void Start () 
     {
         anim = GetComponent<Animator>();
         rb2d = GetComponent<Rigidbody2D>();
-        player = GameObject.FindGameObjectWithTag("Player");
-        spre = GetComponent<SpriteRenderer>();
+        hero = GameObject.FindGameObjectWithTag("Player");
+        spri = GetComponent<SpriteRenderer>();
         health_points = transform.GetChild(0).transform.GetChild(0).gameObject;
         health_points.GetComponent<Text>().text = healthLevel.ToString();
+        heroFightControl = hero.GetComponent<FightControl>();
     }
 
+    // Update is called once per frame
+    void Update()
+    {
+        enemyPositionX = base.transform.position.x;
+        enemyPositionY = base.transform.position.y;
+        SetAreaPosition();
+        health_points.GetComponent<Text>().text = healthLevel.ToString();
+        if (!heroFightControl.HeroIsAttacking()) underAttack = false;
+        if (heroFightControl.HeroIsAttacking() && !underAttack && EnemyInAttackArea(ref heroFightControl.AttackArea()))
+        {
+            underAttack = true;
+            TakeDamage(ref heroFightControl.GetAttackPoint(), ref heroFightControl.AttackDirection());
+            SpecialDamage(ref heroFightControl.GetSpecialEffect());
+        }
+    }
+
+    // METHOD
+
+    // set enemy edges
+    // example call SetAreaPosition()
+    private void SetAreaPosition()
+    {
+        areaPosition.x = enemyPositionX - measurements.x;
+        areaPosition.y = enemyPositionY - measurements.y;
+        areaPosition.z = enemyPositionX + measurements.z;
+        areaPosition.w = enemyPositionY + measurements.w;
+    }
+
+    // return true if enemy area and attack area have common part
+    // example call EnemyInAttackArea(attak area edges)
+    private bool EnemyInAttackArea(ref Vector4 attackArea)
+    {
+        if (areaPosition.x > attackArea.z || areaPosition.z < attackArea.x || areaPosition.y > attackArea.w || areaPosition.w < attackArea.y) return false;
+        else return true;
+    }
+
+    // play anim with trigger
+    // example call PlayAnim("trigger name")
     public void PlayAnim(string animName) // play animation
     {
         anim.SetTrigger(animName);
     }
 
-    public void TakeHealthPoint(int attackPoints) // this function take hero health point
+    // enemy's behaviour on special damage effect
+    // example call SpecialDamage("special effect name")
+    private void SpecialDamage(ref string specialEffect)
     {
-        
-        attackPoints -= armorLevel;
-        if (attackPoints > 0)
+        switch(specialEffect)
         {
-            healthLevel -= attackPoints;
+            case "no": /*normal attack*/ break;
+                /*special effect like burn, paralysis*/
         }
+    }
+
+    // reduce health level by damage depends on crust
+    // example call TakeDamage(damage points,"attack direction")
+    private void TakeDamage(ref float damage, ref string attackDirection)
+    {
+        switch(attackDirection)
+        {
+            case "up":
+                {
+                    damage = damage > crust.y ? damage - crust.y : 0;
+                }
+                break;
+            case "down":
+                {
+                    damage = damage > crust.w ? damage - crust.w : 0;
+                }
+                break;
+            case "right":
+                {
+                    damage = damage > crust.x ? damage - crust.x : 0;
+                }
+                break;
+            case "left":
+                {
+                    damage = damage > crust.z ? damage - crust.z : 0;
+                }
+                break;
+        }
+        healthLevel -= damage;
         if (healthLevel <= 0)
         {
             Destroy(gameObject);
         }
-        Vector2 playerPosition = player.transform.position;
-        Vector2 enemyPosition = GetComponent<Rigidbody2D>().position;
     }
 
-
-    
-    
-
-
-    // Update is called once per frame
-    void Update () 
+    // return crust
+    // example call GetCrust()
+    public ref Vector4 GetCrust()
     {
-        health_points.GetComponent<Text>().text = healthLevel.ToString();
+        return ref crust;
     }
 }
