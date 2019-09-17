@@ -19,8 +19,8 @@ public class WallJump : MonoBehaviour {
         if(other.tag == "Enemy")
         {
            
-            float vel = Mathf.Sqrt(24000 * Mathf.Pow(this.transform.parent.transform.localScale.y, 1.15f)); //Mathf.Sqrt(2000 * height);
-            other.gameObject.GetComponent<ScorpionAI>().ChangeVelocity(new Vector2(0, vel));// tu trzeba zrobić tak by dzialało dla wszystkich
+            float vel = Mathf.Sqrt(24000 * Mathf.Pow(this.transform.parent.transform.localScale.y, 1.15f));
+            other.gameObject.GetComponent<Enemy>().Jump(vel);
         }
     }
 }
