@@ -37,26 +37,28 @@ public class MovingControl : MonoBehaviour
     public string dash_key = "x";
     // special mode
     private bool canMove = true;
+    private bool canDash = true;
     private bool upMode = false;
     private bool downMode = false;
     private bool canJump = true;
+    private bool heroOnGround = true;
     private bool dashMode = false;
     private bool runMode = false;
     private string direction = "right";
     // variables 
     private float zero = 0;
-    private float walkSpeed = 10;
-    private float runSpeed = 50;
-    private float dashSpeed = 200;
+    private float jumpHighStart = 0;
+    private float walkSpeed = 18;
+    private float runSpeed = 36;
+    private float dashSpeed = 350;
     private float currentVerticalSpeed = 0;
     private float currentHorizontalSpeed = 0;
-    private float jumpHeight = 110;
+    private float jumpHeight = 70;
     private float dashBlockTime = 1;
-    private float dashLongTime = 0.2f;
+    private float dashLongTime = 0.02f;
     private int loudSoundNumber = 0;
     private bool loudMoving = false;
     
-    private bool canDash = true;
     private bool isCoroutineExecuting = false;
     private int isCapsLockOn;
 
@@ -77,13 +79,14 @@ public class MovingControl : MonoBehaviour
         runMode = (((ushort)GetKeyState(0x14)) & 0xffff)>0 ? true:false;
     }
 
+    // Update is called once per frame
     void FixedUpdate()
     {
         // can hero move?
         if (canMove)
         {
             currentVerticalSpeed = rb2d.velocity.y;
-            currentHorizontalSpeed = rb2d.velocity.x;
+            currentHorizontalSpeed = rb2d.velocity.x > 0 ? rb2d.velocity.x : -rb2d.velocity.x;
 
             // running or walking
             runMode = (((ushort)GetKeyState(0x14)) & 0xffff) > 0 ? true : false;
@@ -117,8 +120,17 @@ public class MovingControl : MonoBehaviour
             // jump
             if (Input.GetKey(jump_key) && canJump)
             {
+                if(heroOnGround)
+                {
+                    jumpHighStart = base.transform.position.y;
+                    MakeSound();
+                }     
                 Move(ref currentHorizontalSpeed, ref jumpHeight, ref direction);
-                MakeSound();
+                if (base.transform.position.y - jumpHighStart > 20) canJump = false;
+            }
+            else if(!heroOnGround)
+            {
+                canJump = false;
             }
         }
     }
@@ -204,12 +216,13 @@ public class MovingControl : MonoBehaviour
     // action when hero break away from the floor
     void OnTriggerExit2D(Collider2D other)
     {
-        canJump = false;
+        heroOnGround = false;
     }
 
     // action when hero is touching the floor
     void OnTriggerStay2D(Collider2D other)
     {
+        heroOnGround = true;
         canJump = true;
     }
 
@@ -218,6 +231,13 @@ public class MovingControl : MonoBehaviour
     public ref string GetDirection()
     {
         return ref direction;
+    }
+
+    // return canMove variable
+    // example call GetCanMove()
+    public ref bool GetCanMove()
+    {
+        return ref canMove;
     }
 
     // return hero direction mode

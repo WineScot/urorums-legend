@@ -26,9 +26,20 @@ public class FightControl : MonoBehaviour
     private bool isCoroutineExecuting = false;
     private float heroPositionX = 0;
     private float heroPositionY = 0;
-    
 
-// STANDART METHODS
+    void OnGUI()
+    {
+        if (AttackDirection() == "down" && attackAreaIsActive)
+        {
+            GUI.Label(new Rect(10, 10, 100, 20), "Tak");
+        }
+        else
+        {
+            GUI.Label(new Rect(10, 10, 100, 20), "Nie");
+        }
+    }
+
+    // STANDART METHODS
 
     // Used for initialization
     void Start()
@@ -108,10 +119,10 @@ public class FightControl : MonoBehaviour
     // example call SetAttackArea(left width, down height, right width, upper height)
     private void SetAttackArea(float x = 0, float y = 0, float z = 0, float w = 0)
     {           
-        attackArea.x = heroPositionX - x;
-        attackArea.y = heroPositionY - y;
-        attackArea.z = heroPositionX + z;
-        attackArea.w = heroPositionY + w;
+        attackArea.x = -x;
+        attackArea.y = -y;
+        attackArea.z = z;
+        attackArea.w = w;
     }
 
     // Return true if hero is attacking
@@ -131,9 +142,9 @@ public class FightControl : MonoBehaviour
 
     // Return area where hero make attack
     // example call AttackArea()
-    public ref Vector4 AttackArea()
+    public Vector4 AttackArea()
     {
-        return ref attackArea;
+        return new Vector4(attackArea.x + heroPositionX, attackArea.y + heroPositionY, attackArea.z + heroPositionX, attackArea.w + heroPositionY);
     }
 
     // Return information about attack direction (up,down,left,right)
