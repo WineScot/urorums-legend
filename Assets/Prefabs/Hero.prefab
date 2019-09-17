@@ -652,9 +652,6 @@ GameObject:
   - component: {fileID: 49561299655532244}
   - component: {fileID: 49561299655532247}
   - component: {fileID: 49561299655532246}
-  - component: {fileID: 49561299655532241}
-  - component: {fileID: 49561299655532240}
-  - component: {fileID: 49561299655532243}
   m_Layer: 5
   m_Name: Hero
   m_TagString: Player
@@ -821,55 +818,6 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
---- !u!114 &49561299655532241
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 49561299655532242}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8636b82ba4976e14386797b583576c3a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  healthLevel: 100
-  heroIsNoisy: 0
-  health_points: {fileID: 0}
---- !u!114 &49561299655532240
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 49561299655532242}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e30ee3ad387baa1489ea16cdb64b3334, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  up_key: up
-  down_key: down
-  left_key: left
-  right_key: right
-  jump_key: space
-  dash_key: x
---- !u!114 &49561299655532243
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 49561299655532242}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 88df725c5705f4748915cbc96b13e262, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  normal_attack_key: v
-  strong_attack_key: c
-  defence_key: z
-  attackAreaIsActive: 0
 --- !u!1 &49561299695864934
 GameObject:
   m_ObjectHideFlags: 0

@@ -20,7 +20,7 @@ public class WallJump : MonoBehaviour {
         {
            
             float vel = Mathf.Sqrt(24000 * Mathf.Pow(this.transform.parent.transform.localScale.y, 1.15f));
-            other.gameObject.GetComponent<Enemy>().Jump(vel);
+            //other.gameObject.GetComponent<Enemy>().Jump(vel);
         }
     }
 }
