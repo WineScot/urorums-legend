@@ -13,7 +13,6 @@ GameObject:
   - component: {fileID: 3417127147488057902}
   - component: {fileID: 3417127147488057897}
   - component: {fileID: 3417127147488057896}
-  - component: {fileID: 3417127147488057899}
   m_Layer: 0
   m_Name: EvilPlant
   m_TagString: Enemy
@@ -83,7 +82,7 @@ SpriteRenderer:
   m_Size: {x: 2.5, y: 1.25}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!95 &3417127147488057902
@@ -118,11 +117,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   health_points: {fileID: 0}
-  spri: {fileID: 0}
   healthLevel: 200
-  measurements: {x: 5, y: 7, z: 5, w: 6}
-  areaPosition: {x: 0, y: 0, z: 0, w: 0}
-  crust: {x: 0, y: 0, z: 0, w: 0}
+  spre: {fileID: 0}
 --- !u!50 &3417127147488057896
 Rigidbody2D:
   serializedVersion: 4
@@ -144,21 +140,6 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
---- !u!114 &3417127147488057899
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3417127147488057898}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a764ee024881a9e45806675becc7dd26, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  attackMode: 0
-  x_distacne: 0
-  y_distacne: 0
 --- !u!1 &3417127148655111964
 GameObject:
   m_ObjectHideFlags: 0

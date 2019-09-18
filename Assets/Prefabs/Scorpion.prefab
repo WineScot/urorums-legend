@@ -113,7 +113,6 @@ GameObject:
   - component: {fileID: 6033235252925430355}
   - component: {fileID: 6033235252925430352}
   - component: {fileID: 6033235252925430353}
-  - component: {fileID: 6033235252925430358}
   m_Layer: 5
   m_Name: Scorpion
   m_TagString: Enemy
@@ -264,26 +263,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   health_points: {fileID: 0}
-  spri: {fileID: 0}
   healthLevel: 100
-  measurements: {x: 0, y: 0, z: 0, w: 0}
-  areaPosition: {x: 0, y: 0, z: 0, w: 0}
-  crust: {x: 0, y: 0, z: 0, w: 0}
---- !u!114 &6033235252925430358
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6033235252925430359}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: adfd91fc89cdd7845abe7e76f5bf6eb3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  duringAttackMode: 0
-  followHeroMode: 0
-  scorpionPosition: {x: 0, y: 0}
+  spre: {fileID: 0}
 --- !u!1 &6033235253037079686
 GameObject:
   m_ObjectHideFlags: 0
