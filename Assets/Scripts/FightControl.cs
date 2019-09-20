@@ -27,18 +27,6 @@ public class FightControl : MonoBehaviour
     private float heroPositionX = 0;
     private float heroPositionY = 0;
 
-    void OnGUI()
-    {
-        if (AttackDirection() == "down" && attackAreaIsActive)
-        {
-            GUI.Label(new Rect(10, 10, 100, 20), "Tak");
-        }
-        else
-        {
-            GUI.Label(new Rect(10, 10, 100, 20), "Nie");
-        }
-    }
-
     // STANDART METHODS
 
     // Used for initialization

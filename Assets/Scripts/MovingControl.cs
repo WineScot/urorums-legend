@@ -163,6 +163,21 @@ public class MovingControl : MonoBehaviour
 
     }
 
+    // return currentVerticalSpeed
+    // example call CurrentVerticalSpeed()
+    public ref float CurrentVerticalSpeed()
+    {
+        return ref currentVerticalSpeed;
+    }
+
+    // return currentVerticalSpeed
+    // example call CurrentVerticalSpeed()
+    public ref float CurrentHorizontalSpeed()
+    {
+        return ref currentHorizontalSpeed;
+    }
+	
+	
     // activates dash mode for dashLongTime time
     // example call Dash()
     private void Dash()
