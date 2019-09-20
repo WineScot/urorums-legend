@@ -9,10 +9,11 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3417127147488057900}
+  - component: {fileID: 3417127147488057896}
   - component: {fileID: 3417127147488057903}
   - component: {fileID: 3417127147488057902}
   - component: {fileID: 3417127147488057897}
-  - component: {fileID: 3417127147488057896}
+  - component: {fileID: 5573639906105050974}
   m_Layer: 0
   m_Name: EvilPlant
   m_TagString: Enemy
@@ -35,6 +36,27 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!50 &3417127147488057896
+Rigidbody2D:
+  serializedVersion: 4
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3417127147488057898}
+  m_BodyType: 2
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 0
+  m_UseAutoMass: 0
+  m_Mass: 1
+  m_LinearDrag: 0
+  m_AngularDrag: 0.05
+  m_GravityScale: 1
+  m_Material: {fileID: 0}
+  m_Interpolate: 0
+  m_SleepingMode: 1
+  m_CollisionDetection: 0
+  m_Constraints: 0
 --- !u!212 &3417127147488057903
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -117,29 +139,23 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   health_points: {fileID: 0}
+  spri: {fileID: 0}
   healthLevel: 200
-  spre: {fileID: 0}
---- !u!50 &3417127147488057896
-Rigidbody2D:
-  serializedVersion: 4
+  measurements: {x: 0, y: 0, z: 0, w: 0}
+  areaPosition: {x: 0, y: 0, z: 0, w: 0}
+  crust: {x: 0, y: 0, z: 0, w: 0}
+--- !u!114 &5573639906105050974
+MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3417127147488057898}
-  m_BodyType: 2
-  m_Simulated: 1
-  m_UseFullKinematicContacts: 0
-  m_UseAutoMass: 0
-  m_Mass: 1
-  m_LinearDrag: 0
-  m_AngularDrag: 0.05
-  m_GravityScale: 1
-  m_Material: {fileID: 0}
-  m_Interpolate: 0
-  m_SleepingMode: 1
-  m_CollisionDetection: 0
-  m_Constraints: 0
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f7f1a86186fa8b442a439ea5a06dbd70, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &3417127148655111964
 GameObject:
   m_ObjectHideFlags: 0
