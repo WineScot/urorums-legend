@@ -10,6 +10,7 @@ public class ScorpionAI : MonoBehaviour {
     private Animator anim;
     private GameObject hero;
     private Enemy enemyManager;
+    private Collider2D colider;
     private HeroManager heroManager;
     private MovingControl movingControl;
     // special mode
@@ -39,9 +40,8 @@ public class ScorpionAI : MonoBehaviour {
     void Start()
     {
         rb2d = base.GetComponent<Rigidbody2D>();
-        x_velocity = rb2d.velocity.x;
-        y_velocity = rb2d.velocity.y;
         anim = base.GetComponent<Animator>();
+        colider = base.GetComponent<Collider2D>();
         
         hero = GameObject.FindGameObjectWithTag("Player");
         enemyManager = base.GetComponent<Enemy>();
@@ -56,6 +56,8 @@ public class ScorpionAI : MonoBehaviour {
     {
         // set scorpion position
         scorpionPosition = rb2d.position;
+        x_velocity = rb2d.velocity.x;
+        y_velocity = rb2d.velocity.y;
         // attack if hero is close else go to hero
         if (HeroWithinRange("attack"))
         {
@@ -97,8 +99,6 @@ public class ScorpionAI : MonoBehaviour {
         float y_distance = (heroPosition.y - enemyPosition.y) > 0 ? (heroPosition.y - enemyPosition.y) : -(heroPosition.y - enemyPosition.y);
         return new Vector2(x_distance, y_distance);
     }
-
-    
 
     // return true if hero is within checked range
     // example call HeroWithinRange("range name")
@@ -144,16 +144,20 @@ public class ScorpionAI : MonoBehaviour {
         if(heroPosition.x > scorpionPosition.x)
         {
             direction = "right";
-            GetComponent<BoxCollider2D>().offset.Set(1.1f, -0.65f);
             Move(ref moveSpeed, ref y_velocity, ref direction);
             anim.SetTrigger("EnemyRightWalk");
+            //colider.offset.Set(1.1f, -0.65f);
+            //colider.isTrigger = true;
+            colider.offset = new Vector2(1.1f, -0.65f);
         }
         else
         {
             direction = "left";
-            GetComponent<BoxCollider2D>().offset.Set(-1.1f, -0.65f);
             Move(ref moveSpeed, ref y_velocity, ref direction);
             anim.SetTrigger("EnemyLeftWalk");
+            //colider.offset.Set(-1.1f, -0.65f);
+            //colider.isTrigger = false;
+            colider.offset = new Vector2(-1.1f, -0.65f);
         }
     }
 
