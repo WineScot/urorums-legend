@@ -58,6 +58,7 @@ public class MovingControl : MonoBehaviour
     private float dashLongTime = 0.02f;
     private int loudSoundNumber = 0;
     private bool loudMoving = false;
+    private Vector2 position;
     
     private bool isCoroutineExecuting = false;
     private int isCapsLockOn;
@@ -82,6 +83,7 @@ public class MovingControl : MonoBehaviour
     // Update is called once per frame
     void FixedUpdate()
     {
+        position = base.transform.position;
         // can hero move?
         if (canMove)
         {
@@ -176,7 +178,13 @@ public class MovingControl : MonoBehaviour
     {
         return ref currentHorizontalSpeed;
     }
-	
+
+    // return current hero position reference
+    // example call GetPosition()
+    public ref Vector2 GetPosition()
+    {
+        return ref position;
+    }
 	
     // activates dash mode for dashLongTime time
     // example call Dash()

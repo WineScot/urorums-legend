@@ -14,7 +14,7 @@ public class HeroManager : MonoBehaviour
     private float maxhealthLevel = 100f;
     private float armorPoint = 0f;
     // Hero behaviour
-    public bool heroIsNoisy = false;
+    private bool heroIsNoisy = false;
     // Hero component
     private MovingControl heroMovingControl;
     private FightControl fightControl;
@@ -85,10 +85,17 @@ public class HeroManager : MonoBehaviour
         }
     }
 
+    // paralysys hero for time
+    // example call Pralysys(paralysis time)
     public void Pralysys(float time)
     {
         heroMovingControl.GetCanMove() = false;
         StartCoroutine(ExecuteActionAfterTime(time, () => { heroMovingControl.GetCanMove() = true; }));
+    }
+
+    public bool HeroIsNoisy()
+    {
+        return heroIsNoisy;
     }
 
     // used for make action after time 
