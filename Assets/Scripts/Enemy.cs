@@ -102,7 +102,7 @@ public class Enemy : MonoBehaviour
 
     // reduce health level by damage depends on crust
     // example call TakeDamage(damage points,"attack direction")
-    private void TakeDamage(ref float damage, ref string attackDirection)
+    public void TakeDamage(ref float damage, ref string attackDirection)
     {
         switch(attackDirection)
         {
@@ -124,6 +124,11 @@ public class Enemy : MonoBehaviour
             case "left":
                 {
                     damage = damage > crust.z ? damage - crust.z : 0;
+                }
+                break;
+            case "total":
+                {
+                    damage = healthLevel;
                 }
                 break;
         }

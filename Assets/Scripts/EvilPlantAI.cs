@@ -12,8 +12,10 @@ public class EvilPlantAI : MonoBehaviour
     private GameObject player;
     private MovingControl movingControl;
     private HeroManager heroManager;
+    private FightControl fightControl;
+    private Enemy enemyManager;
     // EvilPlant modes
-    private string direction = "left";
+    private string heroSide = "left";
     private bool attackMode = false;
     private string hitDirection = "right";
     private bool onAttack = false;
@@ -21,9 +23,12 @@ public class EvilPlantAI : MonoBehaviour
     private float x_distacne = 0;
     private float y_distacne = 0;
     private Vector2 position;
-    private int attackSingleRhizome = 4;
-    private float horizontalHit = 30;
-    private float verticallHit = 60;
+    private float rhizomeAttackPoint = 3;
+    private float horizontalHit = 10;
+    private float verticallHit = 10;
+    private int attackPosition = 0;
+    public bool singleDamage = true;
+    private string dieCommand = "total";
 
     // STANDARD METHODS
     // Start is called before the first frame update
@@ -34,33 +39,22 @@ public class EvilPlantAI : MonoBehaviour
         player = GameObject.FindGameObjectWithTag("Player");
         movingControl = player.GetComponent<MovingControl>();
         heroManager = player.GetComponent<HeroManager>();
+        enemyManager = base.GetComponent<Enemy>();
         position = base.transform.position;
+        fightControl = player.GetComponent<FightControl>();
     }
 
 
     // Update is called once per frame
     void FixedUpdate()
     {
-        SetHeroPosition();
+        GetHeroPosition();
 
         if (y_distacne < 30)
         {
-            if (attackMode && x_distacne <= 18 && !onAttack && y_distacne < 14)
+            if (attackMode && x_distacne <= 14)
             {
-                //Attack();
-                onAttack = true;
-                if (direction == "right")
-                {
-                    anim.SetTrigger("EvilPlantRightAttack");
-                    //Invoke("IntermediateAttack", 0.2f);
-                    //Invoke("Attack", 0.4f);
-                }
-                else
-                {
-                    anim.SetTrigger("EvilPlantLeftAttack");
-                    //Invoke("IntermediateAttack", 0.2f);
-                    //Invoke("Attack", 0.4f);
-                }
+                Attack();
             }
             else if (x_distacne < 30 && heroManager.HeroIsNoisy())  // plant is listening 
             {
@@ -68,99 +62,87 @@ public class EvilPlantAI : MonoBehaviour
             }
 
         }
+        if(!attackMode)
+        {
+            if (Input.GetKey(fightControl.normal_attack_key) || Input.GetKey(fightControl.strong_attack_key)) 
+            {
+                enemyManager.TakeDamage(ref rhizomeAttackPoint, ref dieCommand);
+            }
+        }
     }
 
     // METHODS
-    private void SetHeroPosition()
+    private void GetHeroPosition()
     {
         x_distacne = movingControl.GetPosition().x - position.x;
         y_distacne = movingControl.GetPosition().y - position.y;
-        if (x_distacne >= 0) direction = "right";
+        if (x_distacne >= 0) heroSide = "right";
         else
         {
             x_distacne = -x_distacne;
-            direction = "left";
+            heroSide = "left";
         }
-        y_distacne = y_distacne > 0 ? y_distacne : -y_distacne;
     }
 
     private bool HeroWithinAttackRange(int number)
     {
+        if (hitDirection != heroSide) return false;
         switch (number)
         {
-            case 1: { if (x_distacne < 3 && y_distacne < 20) return true; } break;
-            case 2: { if (x_distacne < 5 && y_distacne < 18) return true; } break;
-            case 3: { if (x_distacne < 7 && y_distacne < 16) return true; } break;
-            case 4: { if (x_distacne < 9 && y_distacne < 14) return true; } break;
-            case 5: { if (x_distacne < 13 && y_distacne < 12) return true; } break;
+            case 1: { if (x_distacne < 7 && y_distacne < 11) return true; } break;
+            case 2: { if (x_distacne < 8.4f && y_distacne < 10) return true; } break;
+            case 3: { if (x_distacne < 11.3f && y_distacne < 9) return true; } break;
+            case 4: { if (x_distacne < 13 && y_distacne < 4.9f) return true; } break;
+            case 5: { if (x_distacne < 14 && y_distacne < 3.9f) return true; } break;
         }
         return false;
     }
 
     private void Attack()
     {
-
-    }
-
-    public void IntermediateAttack()
-    {
-        if (x_distacne < 8 && y_distacne < 14)
+        if(attackPosition == 0)
         {
-            player.gameObject.GetComponent<HeroManager>().TakeHealth(2 * attackSingleRhizome);
-            if (direction == "left")
+            if (heroSide == "right")
             {
-                hitDirection = "left";
+                anim.SetTrigger("EvilPlantRightAttack");
+                hitDirection = "right";
             }
             else
             {
-                hitDirection = "right";
+                anim.SetTrigger("EvilPlantLeftAttack");
+                hitDirection = "left";
             }
-            player.gameObject.GetComponent<MovingControl>().Move(ref horizontalHit, ref verticallHit, ref hitDirection);
+            StartCoroutine(MakeAttack(0.08f));
         }
-
+        else
+        {
+            if (HeroWithinAttackRange(attackPosition) && singleDamage)
+            {
+                DealDamage();
+                singleDamage = false;
+            }
+        }
     }
-    public void Attackkk()
+
+    private void DealDamage()
     {
-        if (x_distacne > 18 || y_distacne > 14)
-        {
-            onAttack = false;
-            return;
-        }
-        else if (x_distacne >= 13)
-        {
-            player.gameObject.GetComponent<HeroManager>().TakeHealth(attackSingleRhizome);
-        }
-        else if (x_distacne >= 9)
-        {
-            player.gameObject.GetComponent<HeroManager>().TakeHealth(2 * attackSingleRhizome);
-        }
-        else
-        {
-            player.gameObject.GetComponent<HeroManager>().TakeHealth(3 * attackSingleRhizome);
-        }
-        if (direction == "left")
-        {
-            hitDirection = "left";
-        }
-        else
-        {
-            hitDirection = "right";
-        }
-        player.gameObject.GetComponent<MovingControl>().Move(ref horizontalHit, ref verticallHit, ref hitDirection);
-        onAttack = false;
+        heroManager.TakeHealth(rhizomeAttackPoint);
+        heroManager.TakeSpecialDamage("paralysys", 0.2f);
+        movingControl.Move(ref horizontalHit, ref verticallHit, ref hitDirection);
     }
 
     // used for make action after time 
     // example call StartCoroutine(ExecuteActionAfterTime(time,action))
-    IEnumerator ExecuteActionAfterTime(float time)
+    IEnumerator MakeAttack(float time)
     {
-        for(int i=1;i<6;i++)
+        attackPosition = 1;
+        yield return new WaitForSeconds(time);
+        for (int i=2;i<6;i++)
         {
             yield return new WaitForSeconds(time);
-            if(HeroWithinAttackRange(i))
-            {
-
-            }
+            attackPosition = i;
+            singleDamage = true;
         }
+        attackPosition = 0;
     }
 }
