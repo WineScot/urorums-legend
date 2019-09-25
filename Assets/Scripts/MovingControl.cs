@@ -48,8 +48,8 @@ public class MovingControl : MonoBehaviour
     // variables 
     private float zero = 0;
     private float jumpHighStart = 0;
-    private float walkSpeed = 18;
-    private float runSpeed = 36;
+    private float walkSpeed = 9;
+    private float runSpeed = 45;
     private float dashSpeed = 350;
     private float currentVerticalSpeed = 0;
     private float currentHorizontalSpeed = 0;
@@ -126,7 +126,8 @@ public class MovingControl : MonoBehaviour
                 {
                     jumpHighStart = base.transform.position.y;
                     MakeSound();
-                }     
+                }   
+                else if (currentVerticalSpeed <= 0) canJump = false;
                 Move(ref currentHorizontalSpeed, ref jumpHeight, ref direction);
                 if (base.transform.position.y - jumpHighStart > 20) canJump = false;
             }
