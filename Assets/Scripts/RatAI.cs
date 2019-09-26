@@ -21,13 +21,18 @@ public class RatAI : MonoBehaviour
     //variables
     private float x_viewRange = 50;
     private float y_viewRange = 50;
-    private float x_attackRange = 7.3f;
-    private float y_attackRange = 5.6f;
     private float moveSpeed = 15;
+    private float runSpeed = 30;
+    private float jumpSpeed = 20;
     private float zero = 0;
     private float attackPoint = 5f;
-    private float horizontalHit = 30;
-    private float verticallHit = 60;
+    private float horizontalHit = 40;
+    private float verticallHit = 20;
+    private bool singleHit = true;
+    public bool aggressiveStanceMode = false;
+    private bool readyToAttack = false;
+    private bool cooldown = false;
+    private bool duringJump = false;
     // rat params
     private float x_velocity = 0;
     private float y_velocity = 0;
@@ -40,7 +45,7 @@ public class RatAI : MonoBehaviour
     {
         rb2d = base.GetComponent<Rigidbody2D>();
         anim = base.GetComponent<Animator>();
-        colider = base.GetComponent<Collider2D>();
+        colider = base.GetComponent<BoxCollider2D>();
 
         hero = GameObject.FindGameObjectWithTag("Player");
         enemyManager = base.GetComponent<Enemy>();
@@ -57,14 +62,23 @@ public class RatAI : MonoBehaviour
         ratPosition = rb2d.position;
         x_velocity = rb2d.velocity.x;
         y_velocity = rb2d.velocity.y;
-        // attack if hero is close else go to hero
-        if (HeroWithinRange("attack"))
+        // aggressive stance if hero is close else go to hero
+        if(HeroWithinRange("attack"))
         {
-            anim.SetTrigger("EnemyStanding");
-            Attack();
+            FrontAttack();
         }
-        else
+        else if (HeroWithinRange("danger"))
         {
+            //anim.SetTrigger("EnemyStanding");
+            SetAggressiveStance();
+        }
+        else if(!duringJump)
+        {
+            aggressiveStanceMode = false;
+            readyToAttack = false;
+            cooldown = false;
+            /*anim.SetTrigger("EnemyStanding");
+             */
             // detect if hero stand on rat
             if (HeroWithinRange("hero on rat"))
             {
@@ -116,10 +130,22 @@ public class RatAI : MonoBehaviour
             }
             return false;
         }
+        else if (rangeName == "danger")
+        {
+            if (DistanceVector(ref heroManager.GetHeroPosition(), ref ratPosition).y < 7.3f)
+                if (DistanceVector(ref heroManager.GetHeroPosition(), ref ratPosition).x < 29.6f) return true;
+            return false;
+        }
+        else if (rangeName == "to close")
+        {
+            if (DistanceVector(ref heroManager.GetHeroPosition(), ref ratPosition).y < 7.3f)
+                if (DistanceVector(ref heroManager.GetHeroPosition(), ref ratPosition).x < 13.6f) return true;
+            return false;
+        }
         else if (rangeName == "attack")
         {
-            if (DistanceVector(ref heroManager.GetHeroPosition(), ref ratPosition).y < y_attackRange)
-                if (DistanceVector(ref heroManager.GetHeroPosition(), ref ratPosition).x < x_attackRange) return true;
+            if (DistanceVector(ref heroManager.GetHeroPosition(), ref ratPosition).y < 7.3f)
+                if (DistanceVector(ref heroManager.GetHeroPosition(), ref ratPosition).x < 5) return true;
             return false;
         }
         else if (rangeName == "hero on rat")
@@ -127,7 +153,7 @@ public class RatAI : MonoBehaviour
             if (heroManager.GetHeroPosition().y > ratPosition.y)
             {
                 if (DistanceVector(ref heroManager.GetHeroPosition(), ref ratPosition).y < 7.7f)
-                    if (DistanceVector(ref heroManager.GetHeroPosition(), ref ratPosition).x < 6) return true;
+                    if (DistanceVector(ref heroManager.GetHeroPosition(), ref ratPosition).x < 4) return true;
             }
             return false;
         }
@@ -146,7 +172,7 @@ public class RatAI : MonoBehaviour
             anim.SetTrigger("EnemyRightWalk");
             //colider.offset.Set(1.1f, -0.65f);
             //colider.isTrigger = true;
-            colider.offset = new Vector2(1.1f, -0.65f);
+            colider.offset = new Vector2(2.5f, -1);
         }
         else
         {
@@ -155,7 +181,7 @@ public class RatAI : MonoBehaviour
             anim.SetTrigger("EnemyLeftWalk");
             //colider.offset.Set(-1.1f, -0.65f);
             //colider.isTrigger = false;
-            colider.offset = new Vector2(-1.1f, -0.65f);
+            colider.offset = new Vector2(-2.5f, -1);
         }
     }
 
@@ -171,14 +197,31 @@ public class RatAI : MonoBehaviour
 
     // set attack
     // example call Attack()
-    public void Attack()
+    public void SetAggressiveStance()
     {
-        if (!duringAttackMode)
-        { 
-            if (direction == "right") anim.SetTrigger("RatRightAttack");
-            else anim.SetTrigger("RatLeftAttack");
-            StartCoroutine(ExecuteActionAfterTime(0.05f, () => { FrontAttack(); }));
-            StartCoroutine(ExecuteActionAfterTime(0.6f, () => { duringAttackMode = false; }));
+        if (aggressiveStanceMode)
+        {
+            /*if (direction == "right") anim.SetTrigger("RightAggressiveStance");
+            else anim.SetTrigger("LeftAggressiveStance"); */
+            if (readyToAttack)
+            {
+                Move(ref runSpeed, ref y_velocity, ref direction);
+            }
+            if (HeroWithinRange("to close") && !cooldown)
+            {
+                Move(ref runSpeed, ref jumpSpeed, ref direction);
+                readyToAttack = false;
+                StartCoroutine(ExecuteActionAfterTime(0.3f, () => { cooldown = true; }));
+                duringJump = true;
+                StartCoroutine(ExecuteActionAfterTime(0.9f, () => { duringJump = false; }));
+            }
+        }
+        else
+        {
+            /*if (direction == "right") anim.SetTrigger("StartRightAggressiveStance");
+            else anim.SetTrigger("StartLeftAggressiveStance"); */
+            aggressiveStanceMode = true;
+            StartCoroutine(ExecuteActionAfterTime(2f, () => { readyToAttack = true; }));
         }
     }
 
@@ -188,7 +231,8 @@ public class RatAI : MonoBehaviour
     {
         if (HeroWithinRange("hero on rat") && !duringAttackMode)
         {
-            /*drop the hero*/
+            heroManager.TakeSpecialDamage("paralysys", 0.6f);
+            movingControl.Move(ref horizontalHit, ref verticallHit, ref direction);
         }
     }
 
@@ -196,10 +240,11 @@ public class RatAI : MonoBehaviour
     // example call FrontAttack()
     private void FrontAttack()
     {
-        if (HeroWithinRange("attack"))
+        if (singleHit)
         {
-            /*jump into hero direction and deal damage*/
+            singleHit = false;
             heroManager.TakeHealth(attackPoint);
+            StartCoroutine(ExecuteActionAfterTime(0.3f, () => { singleHit = true; }));
         }
     }
 
@@ -219,7 +264,7 @@ public class RatAI : MonoBehaviour
 
     // used for make action after time 
     // example call StartCoroutine(ExecuteActionAfterTime(time,action))
-    IEnumerator ExecuteActionAfterTime(float time, Action action)
+    IEnumerator ExecuteActionAfterTime(float time = 0, Action action = null)
     {
         yield return new WaitForSeconds(time);
         action();
