@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 
-public class ScorpionAI : MonoBehaviour {
-// ATTRIBUTES
+public class EvilWarriorAI : MonoBehaviour
+{// ATTRIBUTES
     // scorpion components
     private Rigidbody2D rb2d;
     private Animator anim;
@@ -13,24 +13,27 @@ public class ScorpionAI : MonoBehaviour {
     private Collider2D colider;
     private HeroManager heroManager;
     private MovingControl movingControl;
+    // warrior Skill
+    public bool followSkill;
+    public bool up_attackSkill;
+    public bool dwon_attackSkill;
+    public bool defenceSkill;
+    public bool jumpSkill;
+    public bool dashSkill;
+    public bool runSkill;
     // special mode
     private bool duringAttackMode = false;
     private bool followHeroMode = false;
-    private string direction = "right";
+    public string x_direction = "right";
+    public string y_direction = "up";
     //variables
     private float x_viewRange = 50;
     private float y_viewRange = 50;
-    private float x_attackRange = 7.3f;
-    private float y_attackRange = 5.6f;
     private float moveSpeed = 15;
     private float zero = 0;
     private float attackPoint = 1f;
-    private float tailAttackPoint = 10f;
-    private float horizontalHit = 30;
-    private float verticallHit = 60;
     // scorpion params
     private float x_velocity = 0;
-    private int warningAttackNr = 0;
     private float y_velocity = 0;
     public Vector2 scorpionPosition;
 
@@ -42,13 +45,13 @@ public class ScorpionAI : MonoBehaviour {
         rb2d = base.GetComponent<Rigidbody2D>();
         anim = base.GetComponent<Animator>();
         colider = base.GetComponent<Collider2D>();
-        
+
         hero = GameObject.FindGameObjectWithTag("Player");
         enemyManager = base.GetComponent<Enemy>();
         heroManager = hero.GetComponent<HeroManager>();
         movingControl = hero.GetComponent<MovingControl>();
 
-        
+
     }
 
     // Update is called once per frame
@@ -67,12 +70,11 @@ public class ScorpionAI : MonoBehaviour {
         else
         {
             // detect if hero stand on scorpion
-            if(HeroWithinRange("hero on scorpion")) 
+            if (HeroWithinRange("hero on scorpion"))
             {
                 anim.SetTrigger("EnemyStanding");
                 Invoke("UpperAttack", 0.5f);
             }
-            warningAttackNr = 0;
             // follow hero if enemy see him
             if (HeroWithinRange("follow"))
             {
@@ -89,7 +91,7 @@ public class ScorpionAI : MonoBehaviour {
         SetCrust();
     }
 
-// METHODS
+    // METHODS
 
     // gets 2xobject Vector2 positon and return Vector2(x distance, y dystance)
     // example call DistanceVector(first object position, second object position)
@@ -120,13 +122,25 @@ public class ScorpionAI : MonoBehaviour {
         }
         else if (rangeName == "attack")
         {
-            if (DistanceVector(ref heroManager.GetHeroPosition(), ref scorpionPosition).y < y_attackRange)
-                if (DistanceVector(ref heroManager.GetHeroPosition(), ref scorpionPosition).x < x_attackRange) return true;
+            if (DistanceVector(ref heroManager.GetHeroPosition(), ref scorpionPosition).y < 4.5f)
+                if (DistanceVector(ref heroManager.GetHeroPosition(), ref scorpionPosition).x < 3.5f) return true;
+            return false;
+        }
+        else if (rangeName == "down attack")
+        {
+            if (DistanceVector(ref heroManager.GetHeroPosition(), ref scorpionPosition).y < 4.5f)
+                if (DistanceVector(ref heroManager.GetHeroPosition(), ref scorpionPosition).x < 3.5f) return true;
+            return false;
+        }
+        else if (rangeName == "up attack")
+        {
+            if (DistanceVector(ref heroManager.GetHeroPosition(), ref scorpionPosition).y < 4.5f)
+                if (DistanceVector(ref heroManager.GetHeroPosition(), ref scorpionPosition).x < 3.5f) return true;
             return false;
         }
         else if (rangeName == "hero on scorpion")
         {
-            if(heroManager.GetHeroPosition().y > scorpionPosition.y)
+            if (heroManager.GetHeroPosition().y > scorpionPosition.y)
             {
                 if (DistanceVector(ref heroManager.GetHeroPosition(), ref scorpionPosition).y < 7.7f)
                     if (DistanceVector(ref heroManager.GetHeroPosition(), ref scorpionPosition).x < 6) return true;
@@ -141,24 +155,26 @@ public class ScorpionAI : MonoBehaviour {
     private void FollowHero(ref Vector2 heroPosition, ref Vector2 scorpionPosition)
     {
         followHeroMode = true;
-        if(heroPosition.x > scorpionPosition.x)
+        if (heroPosition.x > scorpionPosition.x + 2)
         {
-            direction = "right";
-            Move(ref moveSpeed, ref y_velocity, ref direction);
+            x_direction = "right";
+            Move(ref moveSpeed, ref y_velocity, ref x_direction);
             anim.SetTrigger("EnemyRightWalk");
-            //colider.offset.Set(1.1f, -0.65f);
-            //colider.isTrigger = true;
-            colider.offset = new Vector2(1.1f, -0.65f);
+        }
+        else if (heroPosition.x < scorpionPosition.x - 2)
+        {
+            x_direction = "left";
+            Move(ref moveSpeed, ref y_velocity, ref x_direction);
+            anim.SetTrigger("EnemyLeftWalk");
         }
         else
         {
-            direction = "left";
-            Move(ref moveSpeed, ref y_velocity, ref direction);
-            anim.SetTrigger("EnemyLeftWalk");
-            //colider.offset.Set(-1.1f, -0.65f);
-            //colider.isTrigger = false;
-            colider.offset = new Vector2(-1.1f, -0.65f);
+            x_direction = "no";
+            anim.SetTrigger("EnemyStanding");
         }
+        if(heroPosition.y > scorpionPosition.y + 3) y_direction = "up";
+        else if(heroPosition.y < scorpionPosition.y - 3) y_direction = "down";
+        else y_direction = "no";
     }
 
     // get horizontal and vertical speed and direction and move enemy
@@ -171,67 +187,18 @@ public class ScorpionAI : MonoBehaviour {
         rb2d.velocity = movement;
     }
 
+
     // set attack
     // example call Attack()
     public void Attack()
     {
-        if(!duringAttackMode)
+        if (!duringAttackMode)
         {
             duringAttackMode = true;
-            if (warningAttackNr < 2)
-            {
-                if(direction == "right") anim.SetTrigger("ScorpionRightAttack");
-                else anim.SetTrigger("ScorpionLeftAttack");
-                StartCoroutine(ExecuteActionAfterTime(0.05f, () => { ClawAttack(); }));
+            if (x_direction == "right") anim.SetTrigger("ScorpionRightAttack");
+            else anim.SetTrigger("ScorpionLeftAttack");
                 StartCoroutine(ExecuteActionAfterTime(0.6f, () => { duringAttackMode = false; }));
-            }
-            else
-            {
-                if (direction == "right") anim.SetTrigger("ScorpionRightTailAttack");
-                else anim.SetTrigger("ScorpionLeftTailAttack");
-                StartCoroutine(ExecuteActionAfterTime(0.6f, () => { TailAttack(); }));
-                warningAttackNr = 0;
-                StartCoroutine(ExecuteActionAfterTime(1.4f, () => { duringAttackMode = false; }));
-            }
-        }
-    }
-
-    // upper attack
-    // example call UpperAttack()
-    private void UpperAttack()
-    {
-        if(HeroWithinRange("hero on scorpion") && !duringAttackMode)
-        {
-            duringAttackMode = true;
-            if (direction == "right") anim.SetTrigger("ScorpionRightUpperAttack");
-            else anim.SetTrigger("ScorpionLeftUpperAttack");
-            heroManager.TakeHealth(3 * attackPoint);
-            heroManager.TakeSpecialDamage("paralysys", 0.6f);
-            movingControl.Move(ref horizontalHit, ref verticallHit, ref direction);
-            StartCoroutine(ExecuteActionAfterTime(1.4f, () => { duringAttackMode = false; }));
-        }    
-    }
-
-    // tail attack
-    // example call TailAttack()
-    private void TailAttack()
-    {
-        if(HeroWithinRange("attack"))
-        {
-            heroManager.TakeHealth(tailAttackPoint);
-            heroManager.TakeSpecialDamage("paralysys", 0.3f);
-            movingControl.Move(ref horizontalHit, ref verticallHit, ref direction);
-        }
-    }
-
-    // claw attack
-    // example call ClawAttack()
-    private void ClawAttack()
-    {
-        if (HeroWithinRange("attack"))
-        {
-            heroManager.TakeHealth(attackPoint);
-            warningAttackNr++;
+            
         }
     }
 
@@ -239,9 +206,9 @@ public class ScorpionAI : MonoBehaviour {
     // example call SetCrust()
     private void SetCrust()
     {
-        if (direction == "right")
+        if (x_direction == "right")
         {
-            enemyManager.GetCrust() = new Vector4(10,0,5,25);
+            enemyManager.GetCrust() = new Vector4(10, 0, 5, 25);
         }
         else
         {
