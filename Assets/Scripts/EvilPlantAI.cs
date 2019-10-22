@@ -24,8 +24,8 @@ public class EvilPlantAI : MonoBehaviour
     private float y_distacne = 0;
     private Vector2 position;
     private float rhizomeAttackPoint = 3;
-    private float horizontalHit = 10;
-    private float verticallHit = 10;
+    private float horizontalHit = 0;
+    private float verticallHit = 0;
     private int attackPosition = 0;
     public bool singleDamage = true;
     private string dieCommand = "total";
@@ -127,8 +127,8 @@ public class EvilPlantAI : MonoBehaviour
     private void DealDamage()
     {
         heroManager.TakeHealth(rhizomeAttackPoint);
-        heroManager.TakeSpecialDamage("paralysys", 0.2f);
-        movingControl.Move(ref horizontalHit, ref verticallHit, ref hitDirection);
+        //heroManager.TakeSpecialDamage("paralysys", 0.2f);
+        //movingControl.Move(ref horizontalHit, ref verticallHit, ref hitDirection);
     }
 
     // used for make action after time 

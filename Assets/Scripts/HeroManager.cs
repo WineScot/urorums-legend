@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using System;
-
+using UnityEngine.SceneManagement;
 
 public class HeroManager : MonoBehaviour
 {
@@ -23,6 +23,8 @@ public class HeroManager : MonoBehaviour
     private Vector2 heroPosition;
     // variables
     private bool isCoroutineExecuting;
+    public int currentScene = 1;        //scene in which hero saved the game
+    public int currentSaveNumber = 0;   //currently chosen save
 
     // STANDARD METHODS
 
@@ -32,6 +34,12 @@ public class HeroManager : MonoBehaviour
         health_points = transform.Find("Canvas/Text").gameObject;
         heroMovingControl = base.GetComponent<MovingControl>();
         fightControl = base.GetComponent<FightControl>();
+
+        // loading save
+        if (PlayerPrefs.GetInt("CurrentSave") >= 1 && PlayerPrefs.GetInt("CurrentSave") <= 5)             // currentSaveNumber != 0)
+        {
+            LoadHero();
+        }
     }
 
 
@@ -107,6 +115,31 @@ public class HeroManager : MonoBehaviour
         yield return new WaitForSeconds(time);
         action();
         isCoroutineExecuting = false;
+    }
+
+    // Saving and Loading
+    public void SaveHero()
+    {
+        if (currentSaveNumber != 0)
+            SaveSystem.SavePlayer(currentSaveNumber, this);
+        else
+        {
+            SaveLoadManager.DoWeLoad = false;
+            SceneManager.LoadScene(2);
+        }
+    }
+    public void LoadHero()     //(SavePlayerData data)
+    {
+        healthLevel = PlayerPrefs.GetFloat("HeroHealth");
+        Vector3 position;
+        position.x = PlayerPrefs.GetFloat("HeroPositionX");
+        position.y = PlayerPrefs.GetFloat("HeroPositionY");
+        position.z = PlayerPrefs.GetFloat("HeroPositionZ");
+        transform.position = position;
+
+        currentScene = PlayerPrefs.GetInt("CurrentScene"); //scene in which hero saved the game
+        transform.Find("Canvas/DebugText").gameObject.GetComponent<Text>().text = "hero health: " + PlayerPrefs.GetFloat("HeroHealth") + "\nPos.x: " + PlayerPrefs.GetFloat("HeroPositionX") + "\nPos.y: " + PlayerPrefs.GetFloat("HeroPositionY") + "\nPos.z: " + PlayerPrefs.GetFloat("HeroPositionZ");
+        //PlayerPrefs.DeleteAll();
     }
 }
 
