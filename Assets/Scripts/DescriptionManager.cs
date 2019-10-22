@@ -6,13 +6,12 @@ using UnityEngine.UI;
 public class DescriptionManager : MonoBehaviour
 {
     Color bgColor;
-    string descriptionText;
+    Text descriptionText;
 
     // Start is called before the first frame update
     void Start()
     {
-        descriptionText = GetComponentInChildren<Text>().text;
-        // descriptionText = transform.GetChild(0).GetComponent<Text>().text;
+        descriptionText = transform.Find("Description").GetComponent<Text>();
 
         bgColor = GetComponent<Image>().color;
         HideBackground();
@@ -28,10 +27,12 @@ public class DescriptionManager : MonoBehaviour
     {
         bgColor.a = 0f;
         GetComponent<Image>().color = bgColor;
+        descriptionText.text = "";
+
     }
 
     public void ChangeDescriptionText(string textToShow)
     {
-        descriptionText = textToShow;
+        descriptionText.text = textToShow;
     }
 }

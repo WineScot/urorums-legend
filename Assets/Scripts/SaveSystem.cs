@@ -9,7 +9,7 @@ public static class SaveSystem
         BinaryFormatter formatter = new BinaryFormatter();
         string path = Application.persistentDataPath + "/UrorumsSave" + saveNumber + ".binsave";
         FileStream stream = new FileStream(path, FileMode.Create);
-
+        
         SavePlayerData data = new SavePlayerData(hero);
 
         formatter.Serialize(stream, data);
@@ -18,8 +18,26 @@ public static class SaveSystem
         Debug.Log("Game progress saved successfully!");
     }
 
-    // 
-    public static void LoadPlayer(int saveNumber)
+    public static SavePlayerData LoadSaveData(int saveNumber)   // odczytywanie save'ów w scenie odczytu zapisu gry (SaveLoadButtons)
+    {
+        string path = Application.persistentDataPath + "/UrorumsSave" + saveNumber + ".binsave";
+        if (File.Exists(path))
+        {
+            BinaryFormatter formatter = new BinaryFormatter();
+            FileStream stream = new FileStream(path, FileMode.Open);
+
+            SavePlayerData data = formatter.Deserialize(stream) as SavePlayerData;
+            stream.Close();
+            return data;
+        }
+        else
+        {
+            Debug.LogWarning("Save number " + saveNumber + " not found in " + path);
+            return null;
+        }
+    }
+
+    public static void LoadPlayer(int saveNumber)   // odczytywanie save'ów w scenie odczytu zapisu gry (SaveLoadButtons) - stare
     {
         string path = Application.persistentDataPath + "/UrorumsSave" + saveNumber + ".binsave";
         if (File.Exists(path))
@@ -36,6 +54,7 @@ public static class SaveSystem
             PlayerPrefs.SetFloat("HeroPositionY", data.position[1]);
             PlayerPrefs.SetFloat("HeroPositionZ", data.position[2]);
 
+            PlayerPrefs.SetString("SaveDate", data.saveDate);
             PlayerPrefs.SetInt("CurrentScene", data.currentScene);
 
             UnityEngine.SceneManagement.SceneManager.LoadScene(data.currentScene);
@@ -48,6 +67,12 @@ public static class SaveSystem
             Debug.LogError("Save number " + saveNumber + " not found in " + path);
             return;   //return null;
         }
+    }
+
+    public static void DeleteSave (int saveNumber)
+    {
+        string path = Application.persistentDataPath + "/UrorumsSave" + saveNumber + ".binsave";
+        File.Delete(path);
     }
 }
 
