@@ -11,6 +11,7 @@ public class MainMenuHandler : MonoBehaviour
     private void Start()
     {
         canvasControl = this.transform.parent.GetComponent<MainMenuCanvasController>();
+        //canvasControl = GameObject.Find("Canvas").GetComponent<MainMenuCanvasController>();
     }
 
     public void OnClickButton(int whichButton)
