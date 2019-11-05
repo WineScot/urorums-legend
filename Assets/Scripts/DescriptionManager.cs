@@ -6,7 +6,6 @@ using UnityEngine.UI;
 public class DescriptionManager : MonoBehaviour
 {
     public float fadeTime = 0.3f;
-    Color bgColor;
     Text descriptionText;
     Image descriptionButtonImage;
     Text descriptionButtonText;
@@ -17,7 +16,6 @@ public class DescriptionManager : MonoBehaviour
         descriptionText = transform.Find("Description").GetComponent<Text>();
         descriptionButtonImage = transform.Find("ConfirmButton").GetComponent<Image>();
         descriptionButtonText = transform.Find("ConfirmButton").transform.GetComponentInChildren<Text>();
-        bgColor = GetComponent<Image>().color;
         GetComponent<Image>().color = new Color(1, 1, 1, 0f);
         descriptionButtonImage.color = new Color(1, 1, 1, 0f);
         descriptionText.text = "";
@@ -36,8 +34,6 @@ public class DescriptionManager : MonoBehaviour
         }
     }
     
-    
-
 
     public void ShowBackground()
     {

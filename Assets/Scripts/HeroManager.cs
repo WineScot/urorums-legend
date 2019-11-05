@@ -89,13 +89,13 @@ public class HeroManager : MonoBehaviour
     {
         switch(specialEffectName)
         {
-            case "paralysys": Pralysys(time); break;
+            case "paralysys": Paralysys(time); break;
         }
     }
 
     // paralysys hero for time
     // example call Pralysys(paralysis time)
-    public void Pralysys(float time)
+    public void Paralysys(float time)
     {
         heroMovingControl.GetCanMove() = false;
         StartCoroutine(ExecuteActionAfterTime(time, () => { heroMovingControl.GetCanMove() = true; }));
@@ -120,17 +120,19 @@ public class HeroManager : MonoBehaviour
     // Saving and Loading
     public void SaveHero()
     {
-        if (currentSaveNumber != 0)
+        if (currentSaveNumber != 0)         // quick save
             SaveSystem.SavePlayer(currentSaveNumber, this);
-        else
+        else                                // saving z wyborem slota
         {
-            SaveLoadManager.DoWeLoad = false;
-            SceneManager.LoadScene(2);
+            SaveSystem.SavePlayer(0, this); // tymczasowy zapis w slocie 0
+            SceneManager.LoadScene(5);      // save scene
         }
     }
-    public void LoadHero()     //(SavePlayerData data)
+
+    public void LoadHero()
     {
         healthLevel = PlayerPrefs.GetFloat("HeroHealth");
+        currentSaveNumber = PlayerPrefs.GetInt("CurrentSave");
         Vector3 position;
         position.x = PlayerPrefs.GetFloat("HeroPositionX");
         position.y = PlayerPrefs.GetFloat("HeroPositionY");
@@ -138,8 +140,10 @@ public class HeroManager : MonoBehaviour
         transform.position = position;
 
         currentScene = PlayerPrefs.GetInt("CurrentScene"); //scene in which hero saved the game
-        transform.Find("Canvas/DebugText").gameObject.GetComponent<Text>().text = "hero health: " + PlayerPrefs.GetFloat("HeroHealth") + "\nPos.x: " + PlayerPrefs.GetFloat("HeroPositionX") + "\nPos.y: " + PlayerPrefs.GetFloat("HeroPositionY") + "\nPos.z: " + PlayerPrefs.GetFloat("HeroPositionZ");
-        //PlayerPrefs.DeleteAll();
+        transform.Find("Canvas/DebugText").gameObject.GetComponent<Text>().text = "hero health: " + healthLevel + "\nPos.x: " + position.x + "\nPos.y: " + position.y + "\nPos.z: " + position.z + "\nCurrentSaveNumber: " + currentSaveNumber;
+        PlayerPrefs.DeleteAll();
+        PlayerPrefs.SetFloat("HeroPositionX", position.x);  // HeroFollowCamera ustala swoją pozycję w oparciu o PlayerPrefs
+        PlayerPrefs.SetFloat("HeroPositionY", position.y);
     }
 }
 

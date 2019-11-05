@@ -218,7 +218,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 35882869}
-        m_MethodName: OnClick
+        m_MethodName: OnClickLoad
         m_Mode: 3
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -279,6 +279,8 @@ MonoBehaviour:
   doesLoad: 0
   buttonIndex: 5
   isTaken: 0
+  confirmButton: {fileID: 381431195}
+  Xbutton: {fileID: 1071671338}
 --- !u!1 &97181551
 GameObject:
   m_ObjectHideFlags: 0
@@ -413,6 +415,8 @@ MonoBehaviour:
   doesLoad: 0
   buttonIndex: 4
   isTaken: 0
+  confirmButton: {fileID: 381431195}
+  Xbutton: {fileID: 748524176}
 --- !u!114 &137650996
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -457,7 +461,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 137650995}
-        m_MethodName: OnClick
+        m_MethodName: OnClickLoad
         m_Mode: 3
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -613,7 +617,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 158373046}
-        m_MethodName: OnClick
+        m_MethodName: OnClickLoad
         m_Mode: 3
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -674,6 +678,8 @@ MonoBehaviour:
   doesLoad: 0
   buttonIndex: 3
   isTaken: 0
+  confirmButton: {fileID: 381431195}
+  Xbutton: {fileID: 876332197}
 --- !u!1 &261340833
 GameObject:
   m_ObjectHideFlags: 0
@@ -849,7 +855,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 381431200}
-        m_MethodName: ConfirmOnClick
+        m_MethodName: LoadHeroOnClick
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -908,8 +914,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   doesLoad: 0
-  buttonIndex: 11
+  buttonIndex: 10
   isTaken: 0
+  confirmButton: {fileID: 381431195}
+  Xbutton: {fileID: 0}
 --- !u!114 &381431201
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1057,8 +1065,8 @@ RectTransform:
   - {fileID: 137650994}
   - {fileID: 35882864}
   - {fileID: 687725472}
-  m_Father: {fileID: 566572476}
-  m_RootOrder: 0
+  m_Father: {fileID: 0}
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -1221,8 +1229,7 @@ Transform:
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 448.2, y: 254.3, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children:
-  - {fileID: 470074803}
+  m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -1556,7 +1563,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 725860601}
-        m_MethodName: OnClick
+        m_MethodName: OnClickLoad
         m_Mode: 3
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1617,6 +1624,8 @@ MonoBehaviour:
   doesLoad: 0
   buttonIndex: 2
   isTaken: 0
+  confirmButton: {fileID: 381431195}
+  Xbutton: {fileID: 1163193582}
 --- !u!1 &748524176
 GameObject:
   m_ObjectHideFlags: 0
@@ -1672,6 +1681,8 @@ MonoBehaviour:
   doesLoad: 0
   buttonIndex: 14
   isTaken: 0
+  confirmButton: {fileID: 0}
+  Xbutton: {fileID: 0}
 --- !u!114 &748524179
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1894,6 +1905,8 @@ MonoBehaviour:
   doesLoad: 0
   buttonIndex: 11
   isTaken: 0
+  confirmButton: {fileID: 0}
+  Xbutton: {fileID: 0}
 --- !u!114 &820687803
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2116,6 +2129,8 @@ MonoBehaviour:
   doesLoad: 0
   buttonIndex: 13
   isTaken: 0
+  confirmButton: {fileID: 0}
+  Xbutton: {fileID: 0}
 --- !u!114 &876332200
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2415,6 +2430,8 @@ MonoBehaviour:
   doesLoad: 0
   buttonIndex: 15
   isTaken: 0
+  confirmButton: {fileID: 0}
+  Xbutton: {fileID: 0}
 --- !u!114 &1071671342
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2603,7 +2620,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1143713656}
-        m_MethodName: OnClick
+        m_MethodName: OnClickLoad
         m_Mode: 3
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -2664,6 +2681,8 @@ MonoBehaviour:
   doesLoad: 0
   buttonIndex: 1
   isTaken: 0
+  confirmButton: {fileID: 381431195}
+  Xbutton: {fileID: 820687800}
 --- !u!1 &1163193582
 GameObject:
   m_ObjectHideFlags: 0
@@ -2719,6 +2738,8 @@ MonoBehaviour:
   doesLoad: 0
   buttonIndex: 12
   isTaken: 0
+  confirmButton: {fileID: 0}
+  Xbutton: {fileID: 0}
 --- !u!114 &1163193585
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -26,7 +26,10 @@ public class HeroFollowCamera : MonoBehaviour
         hero = GameObject.FindGameObjectWithTag("Player");
         rb2d = base.GetComponent<Rigidbody2D>();
         movingControl = hero.GetComponent<MovingControl>();
-        transform.position = new Vector3(PlayerPrefs.GetFloat("HeroPositionX"), PlayerPrefs.GetFloat("HeroPositionY"), -10);
+                                                          // Odczytywanie save'a
+        if (PlayerPrefs.HasKey("HeroPositionX"))          // Jeśli wybrana została opcja NewGame, to PlayerPrefs jest puste
+            transform.position = new Vector3(PlayerPrefs.GetFloat("HeroPositionX"), PlayerPrefs.GetFloat("HeroPositionY"), -10);
+        PlayerPrefs.DeleteAll();
     }
 
     // Update is called once per frame

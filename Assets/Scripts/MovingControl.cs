@@ -5,6 +5,7 @@ using System.Runtime.InteropServices;
 using System;
 
 
+
 /*
  * ----------PLAYER CONTROLER----------
  * controls basic player moves like:
@@ -139,7 +140,7 @@ public class MovingControl : MonoBehaviour
             // save mechanism
             if (Input.GetKey(save_key))
             {
-                base.transform.GetComponent<HeroManager>().SaveHero(); // save
+                GetComponent<HeroManager>().SaveHero(); // save
             }
         }
     }

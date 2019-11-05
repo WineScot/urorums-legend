@@ -6,31 +6,44 @@ using UnityEngine.UI;
 
 public class SaveLoadButtons : MonoBehaviour
 {
-    public bool doesLoad;            // zmienna określająca czy przy wczytywaniu sceny save/load zapisujemy czy odczytujemy
     public int buttonIndex;
     public bool isTaken = false;
     SavePlayerData data;
 
+    [SerializeField]
+    GameObject confirmButton;
+    [SerializeField]
+    GameObject Xbutton;
+
     DescriptionManager descriptionManager;
     void Start()
     {
-        if (buttonIndex > 10) return;
-        
+        if (buttonIndex >= 10)      // jeśli buttony to "X" do usuwania save'ów
+            return;
+
         descriptionManager = GameObject.FindWithTag("Description").GetComponent<DescriptionManager>();
         data = SaveSystem.LoadSaveData(buttonIndex);
 
+
         if (data != null)       // save exists
         {
-                this.GetComponentInChildren<Text>().text += " - zajęty";
+            this.GetComponentInChildren<Text>().text += " - zajęty";
         }
         else                    // save doesn't exist
         {
-                this.GetComponentInChildren<Text>().text += " - wolny";
-                this.transform.GetChild(1).gameObject.SetActive(false);
+            this.GetComponentInChildren<Text>().text += " - wolny";
+            try
+            {
+                Xbutton.SetActive(false);
+            }
+            catch (NullReferenceException)
+            {
+                // jeśli Xbutton nie znaleziony, to mamy do czynienia z buttonami w scenie Save Game, które nie mają swoich Xbuttonów - jest okej ;)
+            }
         }
     }
 
-    public void OnClick(int whichButton)
+    public void OnClickSave(int whichButton)    // buttony-sloty - OnClick
     {
         if (data != null)       // save exists
         {
@@ -38,17 +51,38 @@ public class SaveLoadButtons : MonoBehaviour
             descriptionText = "Data zapisu: " + data.saveDate;
             descriptionText += "\nPostęp: 0% bo nie mamy tego zaimplementowanego ;P";
             descriptionText += "\nFajnie by było żeby jeszcze się tu wyświetlało eq";
-                                                                                        // SaveLoadManager jest w skrypcie MainMenuCanvasController
-            if (!SaveLoadManager.DoWeLoad)                                              // jeśli nie odczytujemy, to zapisujemy, więc
-                whichButton += 10;                                                      // w ButtonIsClicked() trzeba wywołać funkcję o tagu +10
-            GameObject.Find("ConfirmButton").GetComponent<SaveLoadButtons>().buttonIndex = whichButton + 20;     // przekazujemy nr save'a do descriptionManager, żeby button w description miał do niego dostęp
-                                                                                                                 // dodajemy +20, żeby w MainMenuHandler -> MainMenuCanvasController wykonała się funkcja obsługująca save/load
+
             descriptionManager.ChangeDescriptionText(descriptionText);
-            descriptionManager.ShowBackground();                                        
-        }                                                                                                       
-        else            // save doesn't exist
+            confirmButton.GetComponent<SaveLoadButtons>().buttonIndex = whichButton;
+
+            descriptionManager.ShowBackground();
+        }
+        else            // button nie przechowuje żadnego save'a, więc można od razu zapisywać
         {
-            descriptionManager.HideBackground();
+            PlayerPrefs.SetInt("CurrentSave", whichButton);
+            SaveSystem.SavePlayer(whichButton);
+        }
+    }
+
+    public void OnClickLoad(int whichButton)    // buttony-sloty - OnClick
+    {
+        {
+            if (data != null)       // save exists
+            {
+                string descriptionText;
+                descriptionText = "Data zapisu: " + data.saveDate;
+                descriptionText += "\nPostęp: 0% bo nie mamy tego zaimplementowanego ;P";
+                descriptionText += "\nFajnie by było żeby jeszcze się tu wyświetlało eq";
+
+                confirmButton.GetComponent<SaveLoadButtons>().buttonIndex = whichButton;     // przekazujemy nr save'a do descriptionManager, żeby button w description miał do niego dostęp
+                                                                                                  // dodajemy +20, żeby w MainMenuHandler -> MainMenuCanvasController wykonała się funkcja obsługująca save/load
+                descriptionManager.ChangeDescriptionText(descriptionText);
+                descriptionManager.ShowBackground();
+            }
+            else            // save doesn't exist
+            {
+                descriptionManager.HideBackground();
+            }
         }
     }
 
@@ -57,17 +91,21 @@ public class SaveLoadButtons : MonoBehaviour
         SaveSystem.DeleteSave(whichButton);
         this.gameObject.SetActive(false);
         transform.parent.GetComponentInChildren<Text>().text = "Slot " + whichButton + " - wolny";
-        GameObject.FindWithTag("Description").GetComponent<DescriptionManager>().HideBackground();
+        descriptionManager.HideBackground();
     }
 
     public void BackgroundOnClick()
     {
-        GameObject.FindWithTag("Description").GetComponent<DescriptionManager>().HideBackground();
+        descriptionManager.HideBackground();
     }
 
-    public void ConfirmOnClick()
+    public void LoadHeroOnClick()   // ConfirmButton w scenie Load Game
     {
-        //GetComponent<MainMenuHandler>().OnClickButton(this.buttonIndex);
-        this.transform.parent.transform.parent.GetComponent<MainMenuCanvasController>().ButtonIsClicked() = buttonIndex;
+        SaveSystem.LoadPlayer(buttonIndex);
+    }
+
+    public void SaveHeroOnClick()   // ConfirmButton w scenie Save Game
+    {
+        SaveSystem.SavePlayer(buttonIndex);
     }
 }
