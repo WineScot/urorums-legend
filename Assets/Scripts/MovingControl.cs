@@ -5,6 +5,7 @@ using System.Runtime.InteropServices;
 using System;
 
 
+
 /*
  * ----------PLAYER CONTROLER----------
  * controls basic player moves like:
@@ -35,6 +36,7 @@ public class MovingControl : MonoBehaviour
     public string right_key = "right";
     public string jump_key = "space";
     public string dash_key = "x";
+    public string save_key = "s";
     // special mode
     private bool canMove = true;
     private bool canDash = true;
@@ -134,6 +136,11 @@ public class MovingControl : MonoBehaviour
             else if(!heroOnGround)
             {
                 canJump = false;
+            }
+            // save mechanism
+            if (Input.GetKey(save_key))
+            {
+                GetComponent<HeroManager>().SaveHero(); // save
             }
         }
     }

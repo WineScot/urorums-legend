@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using System;
-
+using UnityEngine.SceneManagement;
 
 public class HeroManager : MonoBehaviour
 {
@@ -23,6 +23,8 @@ public class HeroManager : MonoBehaviour
     private Vector2 heroPosition;
     // variables
     private bool isCoroutineExecuting;
+    public int currentScene = 1;        //scene in which hero saved the game
+    public int currentSaveNumber = 0;   //currently chosen save
 
     // STANDARD METHODS
 
@@ -32,6 +34,12 @@ public class HeroManager : MonoBehaviour
         health_points = transform.Find("Canvas/Text").gameObject;
         heroMovingControl = base.GetComponent<MovingControl>();
         fightControl = base.GetComponent<FightControl>();
+
+        // loading save
+        if (PlayerPrefs.GetInt("CurrentSave") >= 1 && PlayerPrefs.GetInt("CurrentSave") <= 5)             // currentSaveNumber != 0)
+        {
+            LoadHero();
+        }
     }
 
 
@@ -81,13 +89,13 @@ public class HeroManager : MonoBehaviour
     {
         switch(specialEffectName)
         {
-            case "paralysys": Pralysys(time); break;
+            case "paralysys": Paralysys(time); break;
         }
     }
 
     // paralysys hero for time
     // example call Pralysys(paralysis time)
-    public void Pralysys(float time)
+    public void Paralysys(float time)
     {
         heroMovingControl.GetCanMove() = false;
         StartCoroutine(ExecuteActionAfterTime(time, () => { heroMovingControl.GetCanMove() = true; }));
@@ -107,6 +115,35 @@ public class HeroManager : MonoBehaviour
         yield return new WaitForSeconds(time);
         action();
         isCoroutineExecuting = false;
+    }
+
+    // Saving and Loading
+    public void SaveHero()
+    {
+        if (currentSaveNumber != 0)         // quick save
+            SaveSystem.SavePlayer(currentSaveNumber, this);
+        else                                // saving z wyborem slota
+        {
+            SaveSystem.SavePlayer(0, this); // tymczasowy zapis w slocie 0
+            SceneManager.LoadScene(5);      // save scene
+        }
+    }
+
+    public void LoadHero()
+    {
+        healthLevel = PlayerPrefs.GetFloat("HeroHealth");
+        currentSaveNumber = PlayerPrefs.GetInt("CurrentSave");
+        Vector3 position;
+        position.x = PlayerPrefs.GetFloat("HeroPositionX");
+        position.y = PlayerPrefs.GetFloat("HeroPositionY");
+        position.z = PlayerPrefs.GetFloat("HeroPositionZ");
+        transform.position = position;
+
+        currentScene = PlayerPrefs.GetInt("CurrentScene"); //scene in which hero saved the game
+        transform.Find("Canvas/DebugText").gameObject.GetComponent<Text>().text = "hero health: " + healthLevel + "\nPos.x: " + position.x + "\nPos.y: " + position.y + "\nPos.z: " + position.z + "\nCurrentSaveNumber: " + currentSaveNumber;
+        PlayerPrefs.DeleteAll();
+        PlayerPrefs.SetFloat("HeroPositionX", position.x);  // HeroFollowCamera ustala swoją pozycję w oparciu o PlayerPrefs
+        PlayerPrefs.SetFloat("HeroPositionY", position.y);
     }
 }
 
