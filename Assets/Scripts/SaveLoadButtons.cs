@@ -14,8 +14,9 @@ public class SaveLoadButtons : MonoBehaviour
     GameObject confirmButton;
     [SerializeField]
     GameObject Xbutton;
-
+    [SerializeField]
     DescriptionManager descriptionManager;
+
     void Start()
     {
         if (buttonIndex >= 10)      // jeśli buttony to "X" do usuwania save'ów
@@ -37,6 +38,10 @@ public class SaveLoadButtons : MonoBehaviour
                 Xbutton.SetActive(false);
             }
             catch (NullReferenceException)
+            {
+                // jeśli Xbutton nie znaleziony, to mamy do czynienia z buttonami w scenie Save Game, które nie mają swoich Xbuttonów - jest okej ;)
+            }
+            catch (UnassignedReferenceException)
             {
                 // jeśli Xbutton nie znaleziony, to mamy do czynienia z buttonami w scenie Save Game, które nie mają swoich Xbuttonów - jest okej ;)
             }
